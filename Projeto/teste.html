@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clone Netflix</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: white;
+      overflow-x: hidden;
+      transition: margin-left 0.3s ease;
+    }
+
+    /* Estilo do cabeçalho */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      background-color: rgba(0, 0, 0, 0.8);
+      transition: margin-left 0.3s ease;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #e50914;
+    }
+
+    .links-navegacao {
+      display: flex;
+      gap: 20px;
+    }
+
+    .links-navegacao a {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .links-navegacao a:hover {
+      text-decoration: underline;
+    }
+
+    .barra-busca {
+      display: flex;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    .barra-busca input {
+      background: none;
+      border: none;
+      color: white;
+      padding: 5px;
+      width: 200px;
+      outline: none;
+    }
+
+    .barra-busca button {
+      background-color: #e50914;
+      border: none;
+      padding: 5px 10px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .conteudo-principal {
+      padding: 50px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .conteudo-principal h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .secao-filmes {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .filme {
+      min-width: 200px;
+      height: 300px;
+      background-color: #333;
+      border-radius: 8px;
+    }
+
+    /* Destaque de filmes */
+    .destaque {
+      position: relative;
+      height: 400px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .destaque .slide {
+      display: flex;
+      transition: transform 0.5s ease;
+      height: 100%;
+    }
+
+    .destaque .filme {
+      min-width: 100%;
+      height: 100%;
+    }
+
+    .destaque .seta {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .destaque .seta-esquerda {
+      left: 10px;
+    }
+
+    .destaque .seta-direita {
+      right: 10px;
+    }
+
+    /* Botão e barra lateral */
+    .botao-generos {
+      background-color: #e50914;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+      border-radius: 4px;
+      margin-right: 20px;
+    }
+
+    .barra-lateral {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      box-shadow: 4px 0 8px rgba(0, 0, 0, 0.5);
+      transition: left 0.3s ease;
+      z-index: 5;
+    }
+
+    .barra-lateral.ativa {
+      left: 0;
+    }
+
+    .barra-lateral h2 {
+      margin-bottom: 20px;
+    }
+
+    .lista-generos {
+      list-style: none;
+      padding: 0;
+    }
+
+    .lista-generos li {
+      margin-bottom: 15px;
+    }
+
+    .lista-generos li a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.2rem;
+    }
+
+    .lista-generos li a:hover {
+      text-decoration: underline;
+    }
+
+    /* Media queries para tornar o design responsivo */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 30px;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+      }
+
+      .links-navegacao {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .barra-busca {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .barra-busca input {
+        width: 100%;
+      }
+
+      .conteudo-principal {
+        padding: 20px;
+      }
+
+      .conteudo-principal h1 {
+        font-size: 2.5rem;
+      }
+
+      .secao-filmes {
+        gap: 10px;
+      }
+
+      .filme {
+        min-width: 150px;
+        height: 225px;
+      }
+
+      .barra-lateral {
+        width: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 15px 20px;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+      }
+
+      .links-navegacao {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-top: 10px;
+      }
+
+      .barra-busca {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .barra-busca input {
+        width: 100%;
+      }
+
+      .conteudo-principal {
+        padding: 10px;
+      }
+
+      .conteudo-principal h1 {
+        font-size: 2rem;
+      }
+
+      .secao-filmes {
+        gap: 5px;
+      }
+
+      .filme {
+        min-width: 120px;
+        height: 180px;
+      }
+
+      .barra-lateral {
+        width: 200px;
+      }
+    }
+
+    /* Classe para empurrar conteúdo ao abrir a barra */
+    .conteudo-movido {
+      margin-left: 300px;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="cabecalho">
+    <div style="display: flex; align-items: center;">
+      <button class="botao-generos" onclick="abrirBarra()">Gêneros</button>
+      <div class="logo">Clone Netflix</div>
+    </div>
+    <nav class="links-navegacao">
+      <a href="#">Início</a>
+      <a href="#">Séries</a>
+      <a href="#">Filmes</a>
+      <a href="#">Novidades</a>
+    </nav>
+    <div class="barra-busca">
+      <input type="text" placeholder="Buscar...">
+      <button>Buscar</button>
+    </div>
+  </header>
+
+  <!-- Seção de filmes em destaque -->
+  <div class="destaque">
+    <button class="seta seta-esquerda" onclick="mudarSlide(-1)">&#10094;</button>
+    <button class="seta seta-direita" onclick="mudarSlide(1)">&#10095;</button>
+    <div class="slide" id="slideDestaque">
+      <div class="filme">Filme Destaque 1</div>
+      <div class="filme">Filme Destaque 2</div>
+      <div class="filme">Filme Destaque 3</div>
+    </div>
+  </div>
+
+  <div class="conteudo-principal" id="conteudoPrincipal">
+    <!-- Primeira seção de filmes populares -->
+    <h1>Populares na Netflix</h1>
+    <div class="secao-filmes">
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+    </div>
+
+    <!-- Segunda seção de filmes populares -->
+    <h1>Mais Populares</h1>
+    <div class="secao-filmes">
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+      <div class="filme"></div>
+    </div>
+  </div>
+
+  <div class="barra-lateral" id="barraLateral">
+    <h2>Gêneros</h2>
+    <ul class="lista-generos">
+      <li><a href="#">Samba</a></li>
+      <li><a href="#">Pagode</a></li>
+      <li><a href="#">MPB</a></li>
+      <li><a href="#">Rock</a></li>
+      <li><a href="#">Sertanejo</a></li>
+      <li><a href="#">Covers</a></li><br><br><br>
+      <li><h2>Musicos</h2></li>
+      <li><a href="#">Violão</a></li>
+      <li><a href="#">Cavaco</a></li>
+      <li><a href="#">Guitarra</a></li>
+      <li><a href="#">Bateria</a></li>
+      <li><a href="#">Sanfona</a></li>
+      <li><a href="#">Baixo</a></li>
+    </ul>
+  </div>
+
+  <script>
+    // Funcionalidade da barra lateral
+    function abrirBarra() {
+      var barra = document.getElementById("barraLateral");
+      var conteudo = document.getElementById("conteudoPrincipal");
+      var cabecalho = document.getElementById("cabecalho");
+
+      if (barra.classList.contains("ativa")) {
+        barra.classList.remove("ativa");
+        conteudo.classList.remove("conteudo-movido");
+        cabecalho.style.marginLeft = "0";
+      } else {
+        barra.classList.add("ativa");
+        conteudo.classList.add("conteudo-movido");
+        cabecalho.style.marginLeft = "300px";
+      }
+    }
+
+    // Funcionalidade do slide de destaque
+    let slideIndex = 0;
+    const slides = document.querySelector("#slideDestaque");
+    const numSlides = slides.children.length;
+
+    function mudarSlide(n) {
+      slideIndex = (slideIndex + n + numSlides) % numSlides;
+      slides.style.transform = `translateX(-${slideIndex * 100}%)`;
+    }
+
+    setInterval(() => mudarSlide(1), 5000); // Troca de slide a cada 5 segundos
+  </script>
+
+</body>
+</html>
